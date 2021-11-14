@@ -26,11 +26,15 @@ def parseRows(file):
 
     horizontalLoop = int((totalWidth - 2*(powerRingWidth)) / (siteWidth))
     for i in range(0,rowsCount):
-        tempS = "ROW ROW_"+str(i)+" unithd " + str(powerRingWidth) + \
-             str(int(initialHeight+i*unitHeight)) + " N "if i%2==0 else" FS "\
-                  + "DO " +str(horizontalLoop) + " BY 1 STEP " +\
-                       str(int(siteWidth)) + " 0"
-        tempS+="\n"
+        tempS = "ROW ROW_"+str(i)+" unithd " + str(powerRingWidth) + " "
+        tempS += str(int(initialHeight+i*unitHeight)) 
+        if i%2==0:
+            tempS += " N "
+        else:
+            tempS += " FS "
+        tempS += "DO " +str(horizontalLoop) + " BY 1 STEP " 
+        tempS += str(int(siteWidth)) + " 0"
+        tempS += "\n"
         file.write(tempS)
 
 def getWireName(s):
@@ -121,7 +125,7 @@ def main():
     vlogModules = vlog_ex.extract_objects("spm.synthesis.v")
     f = open("floorplan.def", "a")
     parseHeader(f,vlogModules)
-    f.write("DIEAREA ( 0 0 ) ( 98990 109710 ) ;") #To be checked later
+    f.write("DIEAREA ( 0 0 ) ( 98990 109710 ) ;\n") #To be checked later
     parseRows(f)
     parseNets(f)
     parsePins(f,vlogModules)
