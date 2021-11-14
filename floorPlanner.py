@@ -74,7 +74,47 @@ def parseNets(file):
         
 
     # print(getWireName(f[occ[len(occ)-1]:len(f)]))
+
+
+
+def calculateNumOfPins(vlogModules): 
     
+    numberOfports = 0 
+
+
+    for i in vlogModules: 
+        for j in i.ports: 
+            numberOfports = numberOfports + 1
+            if(j.data_type!=""):
+                toint = j.data_type.split(":")
+                fixed = toint[0][2:] 
+    
+                numberOfports+=int(fixed)
+    return numberOfports
+
+
+    
+
+def parsePins(file,vlogModules):
+    
+    numberOfPins = calculateNumOfPins(vlogModules) 
+    file.write("PINS "+str(numberOfPins)+" ;\n")
+
+    for i in vlogModules:
+        for m in i.ports: 
+            if(m.data_type==""): 
+                
+                file.write("- " + m.name + " + NET " + m.name + " + DIRECTION INPUT + USE SIGNAL\n + PORT\n   + LAYER metx ( 0 0 ) ( 0 0 )\n  + PLACED ( 0 0 ) N ;\n")
+
+            else:
+                toint = m.data_type.split(":")
+                fixed = toint[0][2:] 
+                nLoop = int(fixed)
+                for k in range(nLoop+1): 
+
+                    file.write("- " + m.name +"["+str(k)+"]"+ " + NET " + m.name +"["+str(k)+"]"+ " + DIRECTION INPUT + USE SIGNAL\n + PORT\n   + LAYER metx ( 0 0 ) ( 0 0 )\n   + PLACED ( 0 0 ) N ;\n")
+                    # file.write(m.name+"["+str(k)+"]\n")
+                     
 
 def main():
     vlog_ex = vlog.VerilogExtractor()
@@ -84,6 +124,7 @@ def main():
     f.write("DIEAREA ( 0 0 ) ( 98990 109710 ) ;") #To be checked later
     parseRows(f)
     parseNets(f)
+    parsePins(f,vlogModules)
     f.close()
     
 main()
