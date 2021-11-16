@@ -1,6 +1,26 @@
 import hdlparse.verilog_parser as vlog
 import re
 
+def parseAllStatements(ignore):
+    f = open("spm.synthesis.v", "r").read()
+    
+    statements = []
+    prevI = 0
+    curStatement = ""
+    for i in range(len(f)):
+        if f[i]==";":
+            curStatement=f[prevI:i+1]
+            found = False
+            for curIgnore in ignore:
+                if curStatement.find(curIgnore) != -1:
+                    found = True
+            if found==False:
+                curStatement = curStatement.lstrip()
+                statements.append(curStatement)
+            prevI=i+1
+    return statements
+    
+
 def parseSiteWidth():
     f = open("merged_unpadded.lef", "r").read()
     s = f[f.find("unithd"):]
@@ -76,11 +96,6 @@ def parseNets(file):
         netString += " + USE SIGNAL ;\n"
         file.write(netString)
         
-
-    # print(getWireName(f[occ[len(occ)-1]:len(f)]))
-
-
-
 def calculateNumOfPins(vlogModules): 
     
     numberOfports = 0 
@@ -96,8 +111,13 @@ def calculateNumOfPins(vlogModules):
                 numberOfports+=int(fixed)
     return numberOfports
 
-
-    
+def parseComponents(file):
+    statements = parseAllStatements(["module","wire","input","output"])
+    for cur in statements:
+        file.write("-")
+        file.write(cur[cur.find(" "):cur.find("(")])
+        file.write(cur[0:cur.find(" ")])
+        file.write(" ;\n")
 
 def parsePins(file,vlogModules):
     
@@ -117,8 +137,7 @@ def parsePins(file,vlogModules):
                 for k in range(nLoop+1): 
 
                     file.write("- " + m.name +"["+str(k)+"]"+ " + NET " + m.name +"["+str(k)+"]"+ " + DIRECTION INPUT + USE SIGNAL\n + PORT\n   + LAYER metx ( 0 0 ) ( 0 0 )\n   + PLACED ( 0 0 ) N ;\n")
-                    # file.write(m.name+"["+str(k)+"]\n")
-                     
+                    # file.write(m.name+"["+str(k)+"]\n")                   
 
 def main():
     vlog_ex = vlog.VerilogExtractor()
@@ -128,6 +147,7 @@ def main():
     f.write("DIEAREA ( 0 0 ) ( 98990 109710 ) ;\n") #To be checked later
     parseRows(f)
     parseNets(f)
+    parseComponents(f)
     parsePins(f,vlogModules)
     f.close()
     
