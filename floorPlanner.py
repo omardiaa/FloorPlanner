@@ -32,7 +32,7 @@ def parseUnitHeight():
     return float(s[s.find("BY")+3:s[s.find("BY"):s.find("BY")+10].find(";")+s.find("BY")-1])*1000
 
 def parseHeader(file,vlogModules):
-    header = 'VERSION 5.8 ;\nDIVIDERCHAR "/" ;\nBUSBITCHARS "[]";\n'
+    header = 'VERSION 5.8 ;\nDIVIDERCHAR "/" ;\nBUSBITCHARS "[]" ;\n'
     header += "DESIGN "+vlogModules[0].name+";\nUNITS DISTANCE MICRONS 1000 ;\n"
     file.write(header)
 
@@ -68,6 +68,9 @@ def parseNets(file):
     #The previous code assumes that !!, ==, @@ are never used in .v files
 
     occ = [_.start() for _ in re.finditer("wire", f)] 
+
+    file.write("NETS " + str(len(occ))+" ; \n")
+
     for i in range(0,len(occ)-1):
         netString = " - "
 
@@ -95,6 +98,9 @@ def parseNets(file):
             netString += tempNetStrings[j]
         netString += " + USE SIGNAL ;\n"
         file.write(netString)
+
+
+    file.write("END NETS \nEND DESIGN \n")
         
 def calculateNumOfPins(vlogModules): 
     
@@ -113,11 +119,15 @@ def calculateNumOfPins(vlogModules):
 
 def parseComponents(file):
     statements = parseAllStatements(["module","wire","input","output"])
+
+    file.write("COMPONENTS "+str(len(statements))+" ;\n")
     for cur in statements:
         file.write("-")
         file.write(cur[cur.find(" "):cur.find("(")])
         file.write(cur[0:cur.find(" ")])
         file.write(" ;\n")
+
+    file.write("END COMPONENTS \n")
 
 def parsePins(file,vlogModules):
     
@@ -137,7 +147,13 @@ def parsePins(file,vlogModules):
                 for k in range(nLoop+1): 
 
                     file.write("- " + m.name +"["+str(k)+"]"+ " + NET " + m.name +"["+str(k)+"]"+ " + DIRECTION INPUT + USE SIGNAL\n + PORT\n   + LAYER metx ( 0 0 ) ( 0 0 )\n   + PLACED ( 0 0 ) N ;\n")
-                    # file.write(m.name+"["+str(k)+"]\n")                   
+                    # file.write(m.name+"["+str(k)+"]\n")  
+    file.write("END PINS \n")   
+
+
+  
+
+                     
 
 def main():
     vlog_ex = vlog.VerilogExtractor()
@@ -146,9 +162,9 @@ def main():
     parseHeader(f,vlogModules)
     f.write("DIEAREA ( 0 0 ) ( 98990 109710 ) ;\n") #To be checked later
     parseRows(f)
-    parseNets(f)
     parseComponents(f)
     parsePins(f,vlogModules)
+    parseNets(f)
     f.close()
     
 main()
