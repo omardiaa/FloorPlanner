@@ -151,20 +151,37 @@ def parsePins(file,vlogModules):
     file.write("END PINS \n")   
 
 
-  
+def calcArea():
+    f = open("merged_unpadded.lef", "r").read()
+    macrosDimensions = {}
+    macros = [_.start() for _ in re.finditer("MACRO", f)]
+    for i in range(0,len(macros)):
+        substr = f[macros[i]:len(f)]
+        macroName = substr[6:substr.find("\n")].strip()
+        sizeStatement = substr[substr.find("SIZE"):len(f)]
+        width = 1000*float(sizeStatement[sizeStatement.find("SIZE")+5:sizeStatement.find("BY")])
+        height = 1000*float(sizeStatement[sizeStatement.find("BY")+3:sizeStatement.find(";")])
+        macrosDimensions[macroName] = (width,height)
+    
+    statements = parseAllStatements(["module","wire","input","output"])
+    totalArea = 0
+    for cur in statements:
+        curComponent = cur[0:cur.find(" ")]
+        totalArea += macrosDimensions[curComponent][0]*macrosDimensions[curComponent][1]
 
-                     
+    print(totalArea)
+    return totalArea
 
 def main():
-    vlog_ex = vlog.VerilogExtractor()
-    vlogModules = vlog_ex.extract_objects("spm.synthesis.v")
-    f = open("floorplan.def", "a")
-    parseHeader(f,vlogModules)
-    f.write("DIEAREA ( 0 0 ) ( 98990 109710 ) ;\n") #To be checked later
-    parseRows(f)
-    parseComponents(f)
-    parsePins(f,vlogModules)
-    parseNets(f)
-    f.close()
-    
+     vlog_ex = vlog.VerilogExtractor()
+     vlogModules = vlog_ex.extract_objects("spm.synthesis.v")
+     f = open("floorplan.def", "a")
+     parseHeader(f,vlogModules)
+     f.write("DIEAREA ( 0 0 ) ( 98990 109710 ) ;\n") #To be checked later
+     parseRows(f)
+     parseComponents(f)
+     parsePins(f,vlogModules)
+     parseNets(f)
+     f.close()
+     calcArea()
 main()
