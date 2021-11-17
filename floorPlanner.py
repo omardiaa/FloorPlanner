@@ -130,25 +130,96 @@ def parseComponents(file):
 
     file.write("END COMPONENTS \n")
 
-def parsePins(file,vlogModules, pinStartX, pinStartY, pinEndX, pinEndY, metalLayer, perimeter):
+def parsePins(file,vlogModules, pinStartX, pinStartY, pinEndX, pinEndY, metalLayer, dieWidth, dieHeight):
     
     numberOfPins = calculateNumOfPins(vlogModules) 
     file.write("PINS "+str(numberOfPins)+" ;\n")
+    perimeter = (2*dieWidth)+(2*dieHeight)
+    spacing = int(perimeter/numberOfPins) 
+
+
+    x = 0 
+    y = 0
+    xFlag = True
+    yFlag = True
 
     for i in vlogModules:
-        for m in i.ports: 
-            if(m.data_type==""): 
+        for m in i.ports:  
+                if(m.data_type==""): 
+                    
+                    file.write("- " + m.name + " + NET " + m.name + " + DIRECTION INPUT + USE SIGNAL\n + PORT\n   + LAYER met"+str(metalLayer)+" ( "+str(pinStartX)+" "+str(pinStartY)+" ) ( "+str(pinEndX)+" "+str(pinEndY) + " )\n  + PLACED ( "+str(x)+" " +str(y) +" ) N ;\n")
+                    if((x<=dieWidth)&(xFlag==True)):
+                        x = x+spacing
+                        print("here1")
+                    elif(x>dieWidth):
+                        xFlag = False 
+                        print("here2")
+                        y = y+ spacing
+                        
+                    elif(y>dieHeight): 
+                        yFlag = False 
+                        x = x - spacing
+                        print("here3")
+                    elif((x==0)&(x==False)):
+                        y = y - spacing
+                        print("here4")
                 
-                file.write("- " + m.name + " + NET " + m.name + " + DIRECTION INPUT + USE SIGNAL\n + PORT\n   + LAYER metx ( 0 0 ) ( 0 0 )\n  + PLACED ( 0 0 ) N ;\n")
+                else:
+                    toint = m.data_type.split(":")
+                    fixed = toint[0][2:] 
+                    nLoop = int(fixed)
+                    for k in range(nLoop+1): 
+                        file.write("- " + m.name +"["+str(k)+"]"+ " + NET " + m.name +"["+str(k)+"]"+ " + DIRECTION INPUT + USE SIGNAL\n + PORT\n   + LAYER met"+str(metalLayer)+" ( "+str(pinStartX)+" "+str(pinStartY)+" ) ( "+str(pinEndX)+" "+str(pinEndY) + " )\n  + PLACED ( "+str(x)+" " +str(y) +" ) N ;\n")
+                        if((x<dieWidth)&(xFlag==True)):
+                             x = x+spacing
+                             print("here1")
+                        if(x>=dieWidth):
+                            xFlag = False 
+                            print("here2")
+                            y = y+ spacing
+                        if(y>dieHeight): 
+                            yFlag = False 
+                            print("here3")
+                            x = x - spacing
+                        if((x==0)&(xFlag==False)):
+                            y = y - spacing
+                            print("here4")
 
-            else:
-                toint = m.data_type.split(":")
-                fixed = toint[0][2:] 
-                nLoop = int(fixed)
-                for k in range(nLoop+1): 
 
-                    file.write("- " + m.name +"["+str(k)+"]"+ " + NET " + m.name +"["+str(k)+"]"+ " + DIRECTION INPUT + USE SIGNAL\n + PORT\n   + LAYER metx ( 0 0 ) ( 0 0 )\n   + PLACED ( 0 0 ) N ;\n")
-                    # file.write(m.name+"["+str(k)+"]\n")  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    #for i in vlogModules:
+     #   for m in i.ports: 
+      #      if(m.data_type==""): 
+       #         
+        #        file.write("- " + m.name + " + NET " + m.name + " + DIRECTION INPUT + USE SIGNAL\n + PORT\n   + LAYER met"+str(metalLayer)+" ( "+str(pinStartX)+" "+str(pinStartY)+" ) ( "+str(pinEndX)+" "+str(pinEndY) + " )\n  + PLACED ( "+str(x)+" " +str(y) +" ) N ;\n")
+
+         #   else:
+          #      toint = m.data_type.split(":")
+           #     fixed = toint[0][2:] 
+            #    nLoop = int(fixed)
+             #   for k in range(nLoop+1): 
+
+              #      file.write("- " + m.name +"["+str(k)+"]"+ " + NET " + m.name +"["+str(k)+"]"+ " + DIRECTION INPUT + USE SIGNAL\n + PORT\n   + LAYER met"+str(metalLayer)+" ( "+str(pinStartX)+" "+str(pinStartY)+" ) ( "+str(pinEndX)+" "+str(pinEndY) + " )\n  + PLACED ( "+str(x)+" " +str(y) +" ) N ;\n")
+                      
     file.write("END PINS \n")   
 
 
@@ -199,10 +270,14 @@ def calculateLengthWidthOfDie(AspectRatio, dieUtilization):
     siteHeight = parseUnitHeight()
     area  = calcArea() 
 
-    dieArea = float(area/dieUtilization)
+    
+   
+    dieArea = area/dieUtilization
+    dieArea = dieArea/dieUtilization
     dieWidth = float (math.sqrt(dieArea*(1/AspectRatio)))
     dieHeight = float(AspectRatio*dieWidth)
     
+   
 
 
     return dieArea,dieWidth, dieHeight
@@ -223,6 +298,7 @@ def main():
     dieArea,dieWidth, dieHeight = calculateLengthWidthOfDie(AspectRatio, dieUtilization)
 
     
+   
 
 
     #params for pins 

@@ -3,7 +3,7 @@ DIVIDERCHAR "/" ;
 BUSBITCHARS "[]" ;
 DESIGN spm;
 UNITS DISTANCE MICRONS 1000 ;
-DIEAREA ( 0 0 )  ( 99725 49862 ) 
+DIEAREA ( 0 0 )  ( 119195 59597 ) 
 ROW ROW_0 unithd 5520 10880 N DO 216 BY 1 STEP 460 0
 ROW ROW_1 unithd 5520 13600 FS DO 216 BY 1 STEP 460 0
 ROW ROW_2 unithd 5520 16320 N DO 216 BY 1 STEP 460 0
@@ -360,148 +360,148 @@ END COMPONENTS
 PINS 36 ;
 - clk + NET clk + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
   + PLACED ( 0 0 ) N ;
 - p + NET p + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-  + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 9932 0 ) N ;
 - rst + NET rst + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-  + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 19864 0 ) N ;
 - x[0] + NET x[0] + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-   + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 29796 0 ) N ;
 - x[1] + NET x[1] + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-   + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 39728 0 ) N ;
 - x[2] + NET x[2] + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-   + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 49660 0 ) N ;
 - x[3] + NET x[3] + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-   + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 59592 0 ) N ;
 - x[4] + NET x[4] + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-   + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 69524 0 ) N ;
 - x[5] + NET x[5] + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-   + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 79456 0 ) N ;
 - x[6] + NET x[6] + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-   + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 89388 0 ) N ;
 - x[7] + NET x[7] + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-   + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 99320 0 ) N ;
 - x[8] + NET x[8] + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-   + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 109252 0 ) N ;
 - x[9] + NET x[9] + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-   + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 119184 0 ) N ;
 - x[10] + NET x[10] + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-   + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 129116 9932 ) N ;
 - x[11] + NET x[11] + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-   + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 129116 19864 ) N ;
 - x[12] + NET x[12] + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-   + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 129116 29796 ) N ;
 - x[13] + NET x[13] + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-   + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 129116 39728 ) N ;
 - x[14] + NET x[14] + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-   + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 129116 49660 ) N ;
 - x[15] + NET x[15] + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-   + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 129116 59592 ) N ;
 - x[16] + NET x[16] + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-   + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 119184 69524 ) N ;
 - x[17] + NET x[17] + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-   + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 109252 69524 ) N ;
 - x[18] + NET x[18] + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-   + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 99320 69524 ) N ;
 - x[19] + NET x[19] + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-   + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 89388 69524 ) N ;
 - x[20] + NET x[20] + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-   + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 79456 69524 ) N ;
 - x[21] + NET x[21] + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-   + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 69524 69524 ) N ;
 - x[22] + NET x[22] + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-   + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 59592 69524 ) N ;
 - x[23] + NET x[23] + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-   + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 49660 69524 ) N ;
 - x[24] + NET x[24] + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-   + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 39728 69524 ) N ;
 - x[25] + NET x[25] + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-   + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 29796 69524 ) N ;
 - x[26] + NET x[26] + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-   + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 19864 69524 ) N ;
 - x[27] + NET x[27] + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-   + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 9932 69524 ) N ;
 - x[28] + NET x[28] + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-   + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 0 59592 ) N ;
 - x[29] + NET x[29] + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-   + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 0 49660 ) N ;
 - x[30] + NET x[30] + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-   + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 0 39728 ) N ;
 - x[31] + NET x[31] + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-   + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 0 29796 ) N ;
 - y + NET y + DIRECTION INPUT + USE SIGNAL
  + PORT
-   + LAYER metx ( 0 0 ) ( 0 0 )
-  + PLACED ( 0 0 ) N ;
+   + LAYER met2 ( -140 -2000 ) ( 140 2000 )
+  + PLACED ( 0 19864 ) N ;
 END PINS 
 NETS 332 ; 
  - _000_ (_507_ D)  (_380_ X)  + USE SIGNAL ;
