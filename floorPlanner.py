@@ -1,9 +1,10 @@
 import hdlparse.verilog_parser as vlog
 import re
 import math 
+import sys
 
-def parseAllStatements(ignore):
-    f = open("spm.synthesis.v", "r").read()
+def parseAllStatements(inputFile, ignore):
+    f = open(inputFile, "r").read()
     
     statements = []
     prevI = 0
@@ -61,8 +62,8 @@ def  parseRows(file, totalSites, numberOfRows,marginYBottom,marginX):
 def getName(s):
     return s[s.find(" ")+1:s.find(";")]
 
-def parseNets(file, vlogModules):
-    f = open("spm.synthesis.v", "r").read()
+def parseNets(inputFile, file, vlogModules):
+    f = open(inputFile, "r").read()
     f = f.replace("\\","!!") #To avoid using backslashes which causes problems with python
     f = f.replace("[","==") #To avoid using [ which causes problems with python
     f = f.replace("]","@@") #To avoid using ] which causes problems with python
@@ -161,8 +162,8 @@ def calculateNumOfPins(vlogModules):
                 numberOfports+=int(fixed)
     return numberOfports
 
-def parseComponents(file):
-    statements = parseAllStatements(["module","wire","input","output"])
+def parseComponents(inputFile, file):
+    statements = parseAllStatements(inputFile, ["module","wire","input","output"])
 
     file.write("COMPONENTS "+str(len(statements))+" ;\n")
     for cur in statements:
@@ -242,7 +243,7 @@ def parsePins(file,vlogModules, pinStartX, pinStartY, pinEndX, pinEndY, metalLay
                       
     file.write("END PINS \n")   
 
-def calcArea():
+def calcArea(inputFile):
     f = open("merged_unpadded.lef", "r").read()
     macrosDimensions = {}
     macros = [_.start() for _ in re.finditer("MACRO", f)]
@@ -254,7 +255,7 @@ def calcArea():
         height = 1000*float(sizeStatement[sizeStatement.find("BY")+3:sizeStatement.find(";")])
         macrosDimensions[macroName] = (width,height)
     
-    statements = parseAllStatements(["module","wire","input","output"])
+    statements = parseAllStatements(inputFile,["module","wire","input","output"])
     totalArea = 0
     for cur in statements:
         curComponent = cur[0:cur.find(" ")]
@@ -263,10 +264,10 @@ def calcArea():
     
     return totalArea
 
-def calculateLengthWidthOfCore(AspectRatio, coreUtilization): 
+def calculateLengthWidthOfCore(inputFile, AspectRatio, coreUtilization): 
     siteWidth = parseSiteWidth()
     siteHeight = parseUnitHeight()
-    area  = calcArea() 
+    area  = calcArea(inputFile) 
 
     coreArea = float(area/coreUtilization)
     coreWidth = float (math.sqrt(coreArea*(1/AspectRatio)))
@@ -277,10 +278,10 @@ def calculateLengthWidthOfCore(AspectRatio, coreUtilization):
 
     return coreArea,coreWidth, coreHeight, totalSites, numberOfRows 
 
-def calculateLengthWidthOfDie(AspectRatio, dieUtilization): 
+def calculateLengthWidthOfDie(inputFile,AspectRatio, dieUtilization): 
     siteWidth = parseSiteWidth()
     siteHeight = parseUnitHeight()
-    area  = calcArea() 
+    area  = calcArea(inputFile) 
    
     dieArea = area/dieUtilization
     dieArea = dieArea/dieUtilization
@@ -290,6 +291,12 @@ def calculateLengthWidthOfDie(AspectRatio, dieUtilization):
     return dieArea,dieWidth, dieHeight
 
 def main():
+    if len(sys.argv)<2:
+        print("Please, provide the input file name")
+        return
+
+    inputFile = sys.argv[1]
+    
 
     AspectRatio = 0.5 
     coreUtilization = .70
@@ -297,8 +304,8 @@ def main():
     marginX = 5520 
     marginYBottom = 10880
 
-    coreArea,coreWidth, coreHeight, totalSites, numberOfRows = calculateLengthWidthOfCore(AspectRatio, coreUtilization)
-    dieArea,dieWidth, dieHeight = calculateLengthWidthOfDie(AspectRatio, dieUtilization)
+    coreArea,coreWidth, coreHeight, totalSites, numberOfRows = calculateLengthWidthOfCore(inputFile, AspectRatio, coreUtilization)
+    dieArea,dieWidth, dieHeight = calculateLengthWidthOfDie(inputFile, AspectRatio, dieUtilization)
    
     #params for pins 
 
@@ -308,16 +315,21 @@ def main():
     pinStartY = -2000 
     pinEndY =  2000
     metalLayer = 2 
-    
+
     vlog_ex = vlog.VerilogExtractor()
-    vlogModules = vlog_ex.extract_objects("spm.synthesis.v")
-    f = open("floorplan.def", "a")
+    vlogModules = vlog_ex.extract_objects(inputFile)
+
+    outputFile = vlogModules[0].name+".floorplan2.def"
+    print(outputFile)
+    
+    open(outputFile, 'w').close()
+    f = open(outputFile, "a")
     parseHeader(f,vlogModules)
     f.write("DIEAREA ( 0 0 )  ( " + str(int(dieWidth)) + " " + str(int(dieHeight)) +" ); \n") #To be checked later
     parseRows(f, totalSites, numberOfRows,marginYBottom,marginX)
-    parseComponents(f)
+    parseComponents(inputFile, f)
     parsePins(f,vlogModules, pinStartX, pinStartY, pinEndX, pinEndY, metalLayer, dieWidth, dieHeight)
-    parseNets(f,vlogModules)
+    parseNets(inputFile, f,vlogModules)
     # f.close()
    
 main()
