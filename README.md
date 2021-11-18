@@ -1,13 +1,7 @@
 # FloorPlanner
-1. (98990 - 2*5520)/460 = 191.1956522?? not 191! ==> No problem
-2. How to calculate height ==> Total Height input or const
-3. Number of rows ==> 
-    Total area of die = total area of cell / utilization
-    A = W*H
-    Cell area: See what cells are used to get the total area of the cells used from the file 
-4. Difference from top not the same as bottom
-5. Parsing \genblk[9] (Similar parts) not done yet
-6. Some nets are not parsed
-7. 5520 is an input
-8. KLayout cannot read .def file due to formating errors, error given up till line 7 is that the row number 
-is not a floating point, as it's being written as a string 
+How to run the program: 
+
+python3 floorPlanner.py File name AspectRatio, coreUtlization, dieUtilization, marginX, marginY
+
+ex: python3 floorPlanner.py lut_s44.synthesis.v 0.5 0.7 0.7 5520 10880
+

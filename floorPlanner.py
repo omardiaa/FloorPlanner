@@ -362,18 +362,20 @@ def calculateLengthWidthOfDie(inputFile,AspectRatio, dieUtilization):
     return dieArea,dieWidth, dieHeight
 
 def main():
-    if len(sys.argv)<2:
+    if len(sys.argv)<7:
         print("Please, provide the input file name")
         return
+
+#arguments: are File name AspectRatio, coreUtlization, dieUtilization, marginX, marginY
 
     inputFile = sys.argv[1]
     
 
-    AspectRatio = 0.5 
-    coreUtilization = .70
-    dieUtilization = 0.70
-    marginX = 5520 
-    marginYBottom = 10880
+    AspectRatio = float(sys.argv[2])
+    coreUtilization = float(sys.argv[3])
+    dieUtilization = float(sys.argv[4])
+    marginX = float(sys.argv[5])
+    marginYBottom = float(sys.argv[6])
 
     coreArea,coreWidth, coreHeight, totalSites, numberOfRows = calculateLengthWidthOfCore(inputFile, AspectRatio, coreUtilization)
     dieArea,dieWidth, dieHeight = calculateLengthWidthOfDie(inputFile, AspectRatio, dieUtilization)
@@ -391,7 +393,7 @@ def main():
     vlogModules = vlog_ex.extract_objects(inputFile)
 
     outputFile = vlogModules[0].name+".floorplan2.def"
-    print(outputFile)
+    #print(outputFile)
     
     open(outputFile, 'w').close()
     f = open(outputFile, "a")
