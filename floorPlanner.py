@@ -192,56 +192,111 @@ def parsePins(file,vlogModules, pinStartX, pinStartY, pinEndX, pinEndY, metalLay
 
     pinsFile = open("pinfile.txt", "r").read()
 
+    pinsN =[]
+    pinsS = []
+    pinsW = []
+    pinsE = []
 
     for i in vlogModules:
         for m in i.ports:  
             
             tempS1 = pinsFile[0:pinsFile.find(m.name)]
             pinDirection = tempS1[tempS1.rfind("#")+1:tempS1.rfind("#")+2]
+           
             if(m.data_type==""): 
                  
+                if pinDirection=="N":
+                    pinsN.append(m.name)
+                elif pinDirection=="S":
+                    pinsS.append(m.name)
+                elif pinDirection=="W":
+                    pinsW.append(m.name)
+                elif pinDirection=="E":
+                    pinsE.append(m.name)
 
-                file.write("- " + m.name + " + NET " + m.name + " + DIRECTION INPUT + USE SIGNAL\n + PORT\n   + LAYER met"+str(metalLayer)+" ( "+str(pinStartX)+" "+str(pinStartY)+" ) ( "+str(pinEndX)+" "+str(pinEndY) + " )\n  + PLACED ( "+str(x)+" " +str(y) +" ) "+pinDirection+" ;\n")
+                # file.write("- " + m.name + " + NET " + m.name + " + DIRECTION INPUT + USE SIGNAL\n + PORT\n   + LAYER met"+str(metalLayer)+" ( "+str(pinStartX)+" "+str(pinStartY)+" ) ( "+str(pinEndX)+" "+str(pinEndY) + " )\n  + PLACED ( "+str(x)+" " +str(y) +" ) "+pinDirection+" ;\n")
                 
-                cur = c*spacing
-                if cur >= 0 and cur <= dieWidth:
-                    x = cur
-                    y = 0
-                elif cur > dieWidth and cur <= dieWidth + dieHeight:
-                    x=dieWidth
-                    y=cur-dieWidth
-                elif cur > dieWidth+dieHeight and cur <= dieWidth*2 + dieHeight:
-                    x=cur-dieHeight
-                    y = dieHeight
-                elif cur > dieWidth*2 + dieHeight and cur <= dieHeight*2 + dieWidth*2:
-                    x=0
-                    y=cur - dieWidth*2 - dieHeight
+                # cur = c*spacing
+                # if cur >= 0 and cur <= dieWidth:
+                #     x = cur
+                #     y = 0
+                # elif cur > dieWidth and cur <= dieWidth + dieHeight:
+                #     x=dieWidth
+                #     y=cur-dieWidth
+                # elif cur > dieWidth+dieHeight and cur <= dieWidth*2 + dieHeight:
+                #     x=cur-dieHeight
+                #     y = dieHeight
+                # elif cur > dieWidth*2 + dieHeight and cur <= dieHeight*2 + dieWidth*2:
+                #     x=0
+                #     y=cur - dieWidth*2 - dieHeight
                     
-            
             else:
                 toint = m.data_type.split(":")
                 fixed = toint[0][2:] 
                 nLoop = int(fixed)
                 for k in range(nLoop+1): 
-                    file.write("- " + m.name +"["+str(k)+"]"+ " + NET " + m.name +"["+str(k)+"]"+ " + DIRECTION INPUT + USE SIGNAL\n + PORT\n   + LAYER met"+str(metalLayer)+" ( "+str(pinStartX)+" "+str(pinStartY)+" ) ( "+str(pinEndX)+" "+str(pinEndY) + " )\n  + PLACED ( "+str(x)+" " +str(y) +" ) "+pinDirection+" ;\n")
-                    cur = c*spacing
-                    if cur >= 0 and cur <= dieWidth:
-                        x = cur
-                        y = 0
-                    elif cur > dieWidth and cur <= dieWidth + dieHeight:
-                        x=dieWidth
-                        y=cur-dieWidth
-                    elif cur > dieWidth+dieHeight and cur <= dieWidth*2 + dieHeight:
-                        x=dieWidth-(cur-dieWidth-dieHeight)
-                        y = dieHeight
-                    elif cur > dieWidth*2 + dieHeight and cur <= dieHeight*2 + dieWidth*2:
-                        x=0
-                        y=dieHeight-(cur - dieWidth*2 - dieHeight)
+                        
+                    if pinDirection=="N":
+                        pinsN.append(m.name+"["+str(k)+"]")
+                    elif pinDirection=="S":
+                        pinsS.append(m.name+"["+str(k)+"]")
+                    elif pinDirection=="W":
+                        pinsW.append(m.name+"["+str(k)+"]")
+                    elif pinDirection=="E":
+                        pinsE.append(m.name+"["+str(k)+"]")
+
+                    # file.write("- " + m.name +"["+str(k)+"]"+ " + NET " + m.name +"["+str(k)+"]"+ " + DIRECTION INPUT + USE SIGNAL\n + PORT\n   + LAYER met"+str(metalLayer)+" ( "+str(pinStartX)+" "+str(pinStartY)+" ) ( "+str(pinEndX)+" "+str(pinEndY) + " )\n  + PLACED ( "+str(x)+" " +str(y) +" ) "+pinDirection+" ;\n")
+                    # cur = c*spacing
+                    # if cur >= 0 and cur <= dieWidth:
+                    #     x = cur
+                    #     y = 0
+                    # elif cur > dieWidth and cur <= dieWidth + dieHeight:
+                    #     x=dieWidth
+                    #     y=cur-dieWidth
+                    # elif cur > dieWidth+dieHeight and cur <= dieWidth*2 + dieHeight:
+                    #     x=dieWidth-(cur-dieWidth-dieHeight)
+                    #     y = dieHeight
+                    # elif cur > dieWidth*2 + dieHeight and cur <= dieHeight*2 + dieWidth*2:
+                    #     x=0
+                    #     y=dieHeight-(cur - dieWidth*2 - dieHeight)
                     
                     c+=1
                   
 
             c += 1
+    if len(pinsN)>0:
+        spacingN = int(dieWidth/len(pinsN)) 
+        for i in range(0,len(pinsN)):
+            x = i*spacingN
+            y = dieHeight
+            file.write("- " + pinsN[i] + " + NET " + pinsN[i] + " + DIRECTION INPUT + USE SIGNAL\n + PORT\n   + LAYER met"+str(metalLayer)+" ( "+str(pinStartX)+" "+str(pinStartY)+" ) ( "+str(pinEndX)+" "+str(pinEndY) + " )\n  + PLACED ( "+str(x)+" " +str(y) +" ) N ;\n")
+
+    if len(pinsS)>0:
+        spacingS = int(dieWidth/len(pinsS)) 
+        for i in range(0,len(pinsS)):
+            x = i*spacingS
+            y = 0
+            file.write("- " + pinsS[i] + " + NET " + pinsS[i] + " + DIRECTION INPUT + USE SIGNAL\n + PORT\n   + LAYER met"+str(metalLayer)+" ( "+str(pinStartX)+" "+str(pinStartY)+" ) ( "+str(pinEndX)+" "+str(pinEndY) + " )\n  + PLACED ( "+str(x)+" " +str(y) +" ) S ;\n")
+    
+    if len(pinsW)>0:
+        spacingW = int(dieHeight/len(pinsW)) 
+        for i in range(0,len(pinsW)):
+            x = 0
+            y = i*spacingW
+            file.write("- " + pinsW[i] + " + NET " + pinsW[i] + " + DIRECTION INPUT + USE SIGNAL\n + PORT\n   + LAYER met"+str(metalLayer)+" ( "+str(pinStartX)+" "+str(pinStartY)+" ) ( "+str(pinEndX)+" "+str(pinEndY) + " )\n  + PLACED ( "+str(x)+" " +str(y) +" ) W ;\n")
+    
+    if len(pinsE)>0:
+        spacingE = int(dieHeight/len(pinsE)) 
+        for i in range(0,len(pinsE)):
+            x = dieWidth
+            y = i*spacingE
+            file.write("- " + pinsE[i] + " + NET " + pinsE[i] + " + DIRECTION INPUT + USE SIGNAL\n + PORT\n   + LAYER met"+str(metalLayer)+" ( "+str(pinStartX)+" "+str(pinStartY)+" ) ( "+str(pinEndX)+" "+str(pinEndY) + " )\n  + PLACED ( "+str(x)+" " +str(y) +" ) E ;\n")
+    
+
+    # print("N: {}".format(pinsN))
+    # print("S: {}".format(pinsS))
+    # print("W: {}".format(pinsW))
+    # print("E: {}".format(pinsE))
          
     #for i in vlogModules:
      #   for m in i.ports: 
