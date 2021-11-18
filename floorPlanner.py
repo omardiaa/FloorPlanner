@@ -109,7 +109,7 @@ def parseNets(inputFile, file, vlogModules):
                     counter+=1
                 k-=1
             moduleName = f[k-19+f[k-20:k].rfind(" "):k]
-            tempNetStrings.append(" ("+moduleName + " " + curInput+") ")
+            tempNetStrings.append(" ( "+moduleName + " " + curInput+" ) ")
         
         for j in range(len(tempNetStrings)-1,-1,-1):
             netString += tempNetStrings[j]
@@ -138,7 +138,7 @@ def parseNets(inputFile, file, vlogModules):
                     counter+=1
                 k-=1
             moduleName = f[k-19+f[k-20:k].rfind(" "):k]
-            tempNetStrings.append(" ("+moduleName + " " + curInput+") ")
+            tempNetStrings.append(" ( "+moduleName + " " + curInput+" ) ")
         for j in range(len(tempNetStrings)-1,-1,-1):
             netString += tempNetStrings[j]
         netString += " + USE SIGNAL ;\n"
@@ -176,6 +176,8 @@ def parseComponents(inputFile, file):
 
 def parsePins(file,vlogModules, pinStartX, pinStartY, pinEndX, pinEndY, metalLayer, dieWidth, dieHeight):
     
+    dieWidth=int(dieWidth)
+    dieHeight=int(dieHeight)
     numberOfPins = calculateNumOfPins(vlogModules) 
     file.write("PINS "+str(numberOfPins)+" ;\n")
     perimeter = (2*dieWidth)+(2*dieHeight)
@@ -186,46 +188,53 @@ def parsePins(file,vlogModules, pinStartX, pinStartY, pinEndX, pinEndY, metalLay
     xFlag = True
     yFlag = True
 
+    c = 0
+
     for i in vlogModules:
         for m in i.ports:  
-                if(m.data_type==""): 
-                    
-                    file.write("- " + m.name + " + NET " + m.name + " + DIRECTION INPUT + USE SIGNAL\n + PORT\n   + LAYER met"+str(metalLayer)+" ( "+str(pinStartX)+" "+str(pinStartY)+" ) ( "+str(pinEndX)+" "+str(pinEndY) + " )\n  + PLACED ( "+str(x)+" " +str(y) +" ) N ;\n")
-                    if((x<=dieWidth)&(xFlag==True)):
-                        x = x+spacing
-                        
-                    elif(x>dieWidth):
-                        xFlag = False 
-                        
-                        y = y+ spacing
-                        
-                    elif(y>dieHeight): 
-                        yFlag = False 
-                        x = x - spacing
-                        
-                    elif((x==0)&(x==False)):
-                        y = y - spacing
-                        
+            if(m.data_type==""): 
                 
-                else:
-                    toint = m.data_type.split(":")
-                    fixed = toint[0][2:] 
-                    nLoop = int(fixed)
-                    for k in range(nLoop+1): 
-                        file.write("- " + m.name +"["+str(k)+"]"+ " + NET " + m.name +"["+str(k)+"]"+ " + DIRECTION INPUT + USE SIGNAL\n + PORT\n   + LAYER met"+str(metalLayer)+" ( "+str(pinStartX)+" "+str(pinStartY)+" ) ( "+str(pinEndX)+" "+str(pinEndY) + " )\n  + PLACED ( "+str(x)+" " +str(y) +" ) N ;\n")
-                        if((x<dieWidth)&(xFlag==True)):
-                            x = x+spacing
-                             
-                        if(x>=dieWidth):
-                            xFlag = False 
-                            
-                            y = y+ spacing
-                        if(y>dieHeight): 
-                            yFlag = False 
-                            
-                            x = x - spacing
-                        if((x==0)&(xFlag==False)):
-                            y = y - spacing
+                file.write("- " + m.name + " + NET " + m.name + " + DIRECTION INPUT + USE SIGNAL\n + PORT\n   + LAYER met"+str(metalLayer)+" ( "+str(pinStartX)+" "+str(pinStartY)+" ) ( "+str(pinEndX)+" "+str(pinEndY) + " )\n  + PLACED ( "+str(x)+" " +str(y) +" ) N ;\n")
+                
+                cur = c*spacing
+                if cur >= 0 and cur <= dieWidth:
+                    x = cur
+                    y = 0
+                elif cur > dieWidth and cur <= dieWidth + dieHeight:
+                    x=dieWidth
+                    y=cur-dieWidth
+                elif cur > dieWidth+dieHeight and cur <= dieWidth*2 + dieHeight:
+                    x=cur-dieHeight
+                    y = dieHeight
+                elif cur > dieWidth*2 + dieHeight and cur <= dieHeight*2 + dieWidth*2:
+                    x=0
+                    y=cur - dieWidth*2 - dieHeight
+                    
+            
+            else:
+                toint = m.data_type.split(":")
+                fixed = toint[0][2:] 
+                nLoop = int(fixed)
+                for k in range(nLoop+1): 
+                    file.write("- " + m.name +"["+str(k)+"]"+ " + NET " + m.name +"["+str(k)+"]"+ " + DIRECTION INPUT + USE SIGNAL\n + PORT\n   + LAYER met"+str(metalLayer)+" ( "+str(pinStartX)+" "+str(pinStartY)+" ) ( "+str(pinEndX)+" "+str(pinEndY) + " )\n  + PLACED ( "+str(x)+" " +str(y) +" ) N ;\n")
+                    cur = c*spacing
+                    if cur >= 0 and cur <= dieWidth:
+                        x = cur
+                        y = 0
+                    elif cur > dieWidth and cur <= dieWidth + dieHeight:
+                        x=dieWidth
+                        y=cur-dieWidth
+                    elif cur > dieWidth+dieHeight and cur <= dieWidth*2 + dieHeight:
+                        x=dieWidth-(cur-dieWidth-dieHeight)
+                        y = dieHeight
+                    elif cur > dieWidth*2 + dieHeight and cur <= dieHeight*2 + dieWidth*2:
+                        x=0
+                        y=dieHeight-(cur - dieWidth*2 - dieHeight)
+                    
+                    c+=1
+                  
+
+            c += 1
          
     #for i in vlogModules:
      #   for m in i.ports: 
@@ -325,7 +334,7 @@ def main():
     open(outputFile, 'w').close()
     f = open(outputFile, "a")
     parseHeader(f,vlogModules)
-    f.write("DIEAREA ( 0 0 )  ( " + str(int(dieWidth)) + " " + str(int(dieHeight)) +" ); \n") #To be checked later
+    f.write("DIEAREA ( 0 0 )  ( " + str(int(dieWidth)) + " " + str(int(dieHeight)) +" ) ; \n") #To be checked later
     parseRows(f, totalSites, numberOfRows,marginYBottom,marginX)
     parseComponents(inputFile, f)
     parsePins(f,vlogModules, pinStartX, pinStartY, pinEndX, pinEndY, metalLayer, dieWidth, dieHeight)
