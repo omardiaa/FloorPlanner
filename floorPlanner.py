@@ -58,28 +58,43 @@ def  parseRows(file, totalSites, numberOfRows,marginYBottom,marginX):
         tempS += "\n"
         file.write(tempS)
 
-def getWireName(s):
+def getName(s):
     return s[s.find(" ")+1:s.find(";")]
 
-def parseNets(file):
+def parseNets(file, vlogModules):
     f = open("spm.synthesis.v", "r").read()
     f = f.replace("\\","!!") #To avoid using backslashes which causes problems with python
     f = f.replace("[","==") #To avoid using [ which causes problems with python
     f = f.replace("]","@@") #To avoid using ] which causes problems with python
     #The previous code assumes that !!, ==, @@ are never used in .v files
 
-    occ = [_.start() for _ in re.finditer("wire", f)] 
+    wires = [_.start() for _ in re.finditer("wire", f)] 
+    
+    inputsAndOutputs = []
+    for i in vlogModules: 
+        for j in i.ports: 
+            if(j.data_type!=""):
+                toint = j.data_type.split(":")
+                fixed = toint[0][2:] 
+                for k in range(0,int(fixed)+1):
+                    inputsAndOutputs.append("{}[{}]".format(j.name,k))
+            else:
+                inputsAndOutputs.append(j.name)
 
-    file.write("NETS " + str(len(occ))+" ; \n")
+    file.write("NETS " + str(len(wires)+len(inputsAndOutputs))+" ; \n")
 
-    for i in range(0,len(occ)-1):
+    for i in range(0,len(wires)):
         netString = " - "
 
-        wire = getWireName(f[occ[i]:occ[i+1]])
+        if i<len(wires)-1:
+            wire = getName(f[wires[i]:wires[i+1]])
+        else:
+            wire = getName(f[wires[i]:len(f)])
+
         wireOcc = [_.start() for _ in re.finditer(wire, f)]
-        tempWire = wire.replace("!!","\\").replace("==","[").replace("@@","]")
+        tempInOut = wire.replace("!!","\\").replace("==","[").replace("@@","]")
         
-        netString += tempWire
+        netString += tempInOut
 
         tempNetStrings=[]
         for j in range(1, len(wireOcc)): #Loop on all occurances of the wire and ignore the first one
@@ -100,6 +115,35 @@ def parseNets(file):
         netString += " + USE SIGNAL ;\n"
         file.write(netString)
 
+
+    for i in range(0,len(inputsAndOutputs)):
+        netString = " - "
+        inOut = inputsAndOutputs[i].replace("\\","!!").replace("[","==").replace("]","@@")
+        inOutOcc = [_.start() for _ in re.finditer("\({}\)".format(inOut), f)]
+        tempInOut = inOut.replace("!!","\\").replace("==","[").replace("@@","]")
+        
+        netString += tempInOut
+        netString += " ( PIN {} )".format(tempInOut)
+
+        tempNetStrings=[]
+        for j in range(0, len(inOutOcc)): #Loop on all occurances of the inOut and ignore the first one
+            counter = 2
+            k = inOutOcc[j]
+            curInput = f[k-19+f[k-20:k].rfind("."):k]
+            while(counter!=0):
+                if f[k]=="(":
+                    counter-=1
+                if f[k]==")":
+                    counter+=1
+                k-=1
+            moduleName = f[k-19+f[k-20:k].rfind(" "):k]
+            tempNetStrings.append(" ("+moduleName + " " + curInput+") ")
+            # print(" ({} {}) ".format(moduleName,curInput))
+        for j in range(len(tempNetStrings)-1,-1,-1):
+            netString += tempNetStrings[j]
+        netString += " + USE SIGNAL ;\n"
+        file.write(netString)
+    
 
     file.write("END NETS \nEND DESIGN \n")
         
@@ -185,29 +229,7 @@ def parsePins(file,vlogModules, pinStartX, pinStartY, pinEndX, pinEndY, metalLay
                             x = x - spacing
                         if((x==0)&(xFlag==False)):
                             y = y - spacing
-                            
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+         
     #for i in vlogModules:
      #   for m in i.ports: 
       #      if(m.data_type==""): 
@@ -223,7 +245,6 @@ def parsePins(file,vlogModules, pinStartX, pinStartY, pinEndX, pinEndY, metalLay
               #      file.write("- " + m.name +"["+str(k)+"]"+ " + NET " + m.name +"["+str(k)+"]"+ " + DIRECTION INPUT + USE SIGNAL\n + PORT\n   + LAYER met"+str(metalLayer)+" ( "+str(pinStartX)+" "+str(pinStartY)+" ) ( "+str(pinEndX)+" "+str(pinEndY) + " )\n  + PLACED ( "+str(x)+" " +str(y) +" ) N ;\n")
                       
     file.write("END PINS \n")   
-
 
 def calcArea():
     f = open("merged_unpadded.lef", "r").read()
@@ -246,10 +267,7 @@ def calcArea():
     
     return totalArea
 
-
-
 def calculateLengthWidthOfCore(AspectRatio, coreUtilization): 
-    
     siteWidth = parseSiteWidth()
     siteHeight = parseUnitHeight()
     area  = calcArea() 
@@ -263,76 +281,47 @@ def calculateLengthWidthOfCore(AspectRatio, coreUtilization):
 
     return coreArea,coreWidth, coreHeight, totalSites, numberOfRows 
 
-
-
-
 def calculateLengthWidthOfDie(AspectRatio, dieUtilization): 
-    
     siteWidth = parseSiteWidth()
     siteHeight = parseUnitHeight()
     area  = calcArea() 
-
-    
    
     dieArea = area/dieUtilization
     dieArea = dieArea/dieUtilization
     dieWidth = float (math.sqrt(dieArea*(1/AspectRatio)))
     dieHeight = float(AspectRatio*dieWidth)
-    
-   
-
 
     return dieArea,dieWidth, dieHeight
 
-
-
 def main():
 
-    AspectRatio = 0.5 
-    coreUtilization = .70
-    dieUtilization = 0.70
-    marginX = 5520 
-    marginYBottom = 10880
+    # AspectRatio = 0.5 
+    # coreUtilization = .70
+    # dieUtilization = 0.70
+    # marginX = 5520 
+    # marginYBottom = 10880
 
-
-
-    coreArea,coreWidth, coreHeight, totalSites, numberOfRows = calculateLengthWidthOfCore(AspectRatio, coreUtilization)
-    dieArea,dieWidth, dieHeight = calculateLengthWidthOfDie(AspectRatio, dieUtilization)
-
-    
+    # coreArea,coreWidth, coreHeight, totalSites, numberOfRows = calculateLengthWidthOfCore(AspectRatio, coreUtilization)
+    # dieArea,dieWidth, dieHeight = calculateLengthWidthOfDie(AspectRatio, dieUtilization)
    
+    # #params for pins 
 
-
-    #params for pins 
-
-
-    #from the generated .def file as instructed 
-    pinStartX = -140
-    pinEndX = 140
-    pinStartY = -2000 
-    pinEndY =  2000
-    metalLayer = 2 
-    
-
-
-    
-
+    # #from the generated .def file as instructed 
+    # pinStartX = -140
+    # pinEndX = 140
+    # pinStartY = -2000 
+    # pinEndY =  2000
+    # metalLayer = 2 
     
     vlog_ex = vlog.VerilogExtractor()
     vlogModules = vlog_ex.extract_objects("spm.synthesis.v")
     f = open("floorplan.def", "a")
-    parseHeader(f,vlogModules)
-    f.write("DIEAREA ( 0 0 )  ( " + str(int(dieWidth)) + " " + str(int(dieHeight)) +" ) \n") #To be checked later
-    parseRows(f, totalSites, numberOfRows,marginYBottom,marginX)
-    parseComponents(f)
-    parsePins(f,vlogModules, pinStartX, pinStartY, pinEndX, pinEndY, metalLayer, dieWidth, dieHeight)
-    parseNets(f)
-    f.close()
-    
-     
-    
-
-
-
-
+    # parseHeader(f,vlogModules)
+    # f.write("DIEAREA ( 0 0 )  ( " + str(int(dieWidth)) + " " + str(int(dieHeight)) +" ) \n") #To be checked later
+    # parseRows(f, totalSites, numberOfRows,marginYBottom,marginX)
+    # parseComponents(f)
+    # parsePins(f,vlogModules, pinStartX, pinStartY, pinEndX, pinEndY, metalLayer, dieWidth, dieHeight)
+    parseNets(f,vlogModules)
+    # f.close()
+   
 main()
