@@ -54,7 +54,7 @@ def  parseRows(file, totalSites, numberOfRows,marginYBottom,marginX):
         else:
             tempS += " FS "
         tempS += "DO " +str(horizontalLoop) + " BY 1 STEP " 
-        tempS += str(int(siteWidth)) + " 0"
+        tempS += str(int(siteWidth)) + " 0 ;"
         tempS += "\n"
         file.write(tempS)
 
@@ -138,7 +138,6 @@ def parseNets(file, vlogModules):
                 k-=1
             moduleName = f[k-19+f[k-20:k].rfind(" "):k]
             tempNetStrings.append(" ("+moduleName + " " + curInput+") ")
-            # print(" ({} {}) ".format(moduleName,curInput))
         for j in range(len(tempNetStrings)-1,-1,-1):
             netString += tempNetStrings[j]
         netString += " + USE SIGNAL ;\n"
@@ -180,9 +179,6 @@ def parsePins(file,vlogModules, pinStartX, pinStartY, pinEndX, pinEndY, metalLay
     file.write("PINS "+str(numberOfPins)+" ;\n")
     perimeter = (2*dieWidth)+(2*dieHeight)
     spacing = int(perimeter/numberOfPins) 
-
-    print(perimeter)
-    print(spacing)
 
     x = 0 
     y = 0
@@ -295,32 +291,32 @@ def calculateLengthWidthOfDie(AspectRatio, dieUtilization):
 
 def main():
 
-    # AspectRatio = 0.5 
-    # coreUtilization = .70
-    # dieUtilization = 0.70
-    # marginX = 5520 
-    # marginYBottom = 10880
+    AspectRatio = 0.5 
+    coreUtilization = .70
+    dieUtilization = 0.70
+    marginX = 5520 
+    marginYBottom = 10880
 
-    # coreArea,coreWidth, coreHeight, totalSites, numberOfRows = calculateLengthWidthOfCore(AspectRatio, coreUtilization)
-    # dieArea,dieWidth, dieHeight = calculateLengthWidthOfDie(AspectRatio, dieUtilization)
+    coreArea,coreWidth, coreHeight, totalSites, numberOfRows = calculateLengthWidthOfCore(AspectRatio, coreUtilization)
+    dieArea,dieWidth, dieHeight = calculateLengthWidthOfDie(AspectRatio, dieUtilization)
    
-    # #params for pins 
+    #params for pins 
 
-    # #from the generated .def file as instructed 
-    # pinStartX = -140
-    # pinEndX = 140
-    # pinStartY = -2000 
-    # pinEndY =  2000
-    # metalLayer = 2 
+    #from the generated .def file as instructed 
+    pinStartX = -140
+    pinEndX = 140
+    pinStartY = -2000 
+    pinEndY =  2000
+    metalLayer = 2 
     
     vlog_ex = vlog.VerilogExtractor()
     vlogModules = vlog_ex.extract_objects("spm.synthesis.v")
     f = open("floorplan.def", "a")
-    # parseHeader(f,vlogModules)
-    # f.write("DIEAREA ( 0 0 )  ( " + str(int(dieWidth)) + " " + str(int(dieHeight)) +" ) \n") #To be checked later
-    # parseRows(f, totalSites, numberOfRows,marginYBottom,marginX)
-    # parseComponents(f)
-    # parsePins(f,vlogModules, pinStartX, pinStartY, pinEndX, pinEndY, metalLayer, dieWidth, dieHeight)
+    parseHeader(f,vlogModules)
+    f.write("DIEAREA ( 0 0 )  ( " + str(int(dieWidth)) + " " + str(int(dieHeight)) +" ); \n") #To be checked later
+    parseRows(f, totalSites, numberOfRows,marginYBottom,marginX)
+    parseComponents(f)
+    parsePins(f,vlogModules, pinStartX, pinStartY, pinEndX, pinEndY, metalLayer, dieWidth, dieHeight)
     parseNets(f,vlogModules)
     # f.close()
    
