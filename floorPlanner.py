@@ -190,11 +190,18 @@ def parsePins(file,vlogModules, pinStartX, pinStartY, pinEndX, pinEndY, metalLay
 
     c = 0
 
+    pinsFile = open("pinfile.txt", "r").read()
+
+
     for i in vlogModules:
         for m in i.ports:  
+            
+            tempS1 = pinsFile[0:pinsFile.find(m.name)]
+            pinDirection = tempS1[tempS1.rfind("#")+1:tempS1.rfind("#")+2]
             if(m.data_type==""): 
-                
-                file.write("- " + m.name + " + NET " + m.name + " + DIRECTION INPUT + USE SIGNAL\n + PORT\n   + LAYER met"+str(metalLayer)+" ( "+str(pinStartX)+" "+str(pinStartY)+" ) ( "+str(pinEndX)+" "+str(pinEndY) + " )\n  + PLACED ( "+str(x)+" " +str(y) +" ) N ;\n")
+                 
+
+                file.write("- " + m.name + " + NET " + m.name + " + DIRECTION INPUT + USE SIGNAL\n + PORT\n   + LAYER met"+str(metalLayer)+" ( "+str(pinStartX)+" "+str(pinStartY)+" ) ( "+str(pinEndX)+" "+str(pinEndY) + " )\n  + PLACED ( "+str(x)+" " +str(y) +" ) "+pinDirection+" ;\n")
                 
                 cur = c*spacing
                 if cur >= 0 and cur <= dieWidth:
@@ -216,7 +223,7 @@ def parsePins(file,vlogModules, pinStartX, pinStartY, pinEndX, pinEndY, metalLay
                 fixed = toint[0][2:] 
                 nLoop = int(fixed)
                 for k in range(nLoop+1): 
-                    file.write("- " + m.name +"["+str(k)+"]"+ " + NET " + m.name +"["+str(k)+"]"+ " + DIRECTION INPUT + USE SIGNAL\n + PORT\n   + LAYER met"+str(metalLayer)+" ( "+str(pinStartX)+" "+str(pinStartY)+" ) ( "+str(pinEndX)+" "+str(pinEndY) + " )\n  + PLACED ( "+str(x)+" " +str(y) +" ) N ;\n")
+                    file.write("- " + m.name +"["+str(k)+"]"+ " + NET " + m.name +"["+str(k)+"]"+ " + DIRECTION INPUT + USE SIGNAL\n + PORT\n   + LAYER met"+str(metalLayer)+" ( "+str(pinStartX)+" "+str(pinStartY)+" ) ( "+str(pinEndX)+" "+str(pinEndY) + " )\n  + PLACED ( "+str(x)+" " +str(y) +" ) "+pinDirection+" ;\n")
                     cur = c*spacing
                     if cur >= 0 and cur <= dieWidth:
                         x = cur

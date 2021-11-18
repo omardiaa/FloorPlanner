@@ -1,0 +1,6 @@
+#N
+x
+y
+#S
+clk
+rst

@@ -361,15 +361,15 @@ PINS 36 ;
 - clk + NET clk + DIRECTION INPUT + USE SIGNAL
  + PORT
    + LAYER met2 ( -140 -2000 ) ( 140 2000 )
-  + PLACED ( 0 0 ) N ;
+  + PLACED ( 0 0 ) S ;
 - p + NET p + DIRECTION INPUT + USE SIGNAL
  + PORT
    + LAYER met2 ( -140 -2000 ) ( 140 2000 )
-  + PLACED ( 0 0 ) N ;
+  + PLACED ( 0 0 ) S ;
 - rst + NET rst + DIRECTION INPUT + USE SIGNAL
  + PORT
    + LAYER met2 ( -140 -2000 ) ( 140 2000 )
-  + PLACED ( 9932 0 ) N ;
+  + PLACED ( 9932 0 ) S ;
 - x[0] + NET x[0] + DIRECTION INPUT + USE SIGNAL
  + PORT
    + LAYER met2 ( -140 -2000 ) ( 140 2000 )
