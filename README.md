@@ -9,3 +9,5 @@
 5. Parsing \genblk[9] (Similar parts) not done yet
 6. Some nets are not parsed
 7. 5520 is an input
+8. KLayout cannot read .def file due to formating errors, error given up till line 7 is that the row number 
+is not a floating point, as it's being written as a string 

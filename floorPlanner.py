@@ -34,7 +34,7 @@ def parseUnitHeight():
 
 def parseHeader(file,vlogModules):
     header = 'VERSION 5.8 ;\nDIVIDERCHAR "/" ;\nBUSBITCHARS "[]" ;\n'
-    header += "DESIGN "+vlogModules[0].name+";\nUNITS DISTANCE MICRONS 1000 ;\n"
+    header += "DESIGN "+vlogModules[0].name+" ;\nUNITS DISTANCE MICRONS 1000 ;\n"
     file.write(header)
 
 def  parseRows(file, totalSites, numberOfRows,marginYBottom,marginX):
@@ -137,6 +137,8 @@ def parsePins(file,vlogModules, pinStartX, pinStartY, pinEndX, pinEndY, metalLay
     perimeter = (2*dieWidth)+(2*dieHeight)
     spacing = int(perimeter/numberOfPins) 
 
+    print(perimeter)
+    print(spacing)
 
     x = 0 
     y = 0
@@ -150,19 +152,19 @@ def parsePins(file,vlogModules, pinStartX, pinStartY, pinEndX, pinEndY, metalLay
                     file.write("- " + m.name + " + NET " + m.name + " + DIRECTION INPUT + USE SIGNAL\n + PORT\n   + LAYER met"+str(metalLayer)+" ( "+str(pinStartX)+" "+str(pinStartY)+" ) ( "+str(pinEndX)+" "+str(pinEndY) + " )\n  + PLACED ( "+str(x)+" " +str(y) +" ) N ;\n")
                     if((x<=dieWidth)&(xFlag==True)):
                         x = x+spacing
-                        print("here1")
+                        
                     elif(x>dieWidth):
                         xFlag = False 
-                        print("here2")
+                        
                         y = y+ spacing
                         
                     elif(y>dieHeight): 
                         yFlag = False 
                         x = x - spacing
-                        print("here3")
+                        
                     elif((x==0)&(x==False)):
                         y = y - spacing
-                        print("here4")
+                        
                 
                 else:
                     toint = m.data_type.split(":")
@@ -171,19 +173,19 @@ def parsePins(file,vlogModules, pinStartX, pinStartY, pinEndX, pinEndY, metalLay
                     for k in range(nLoop+1): 
                         file.write("- " + m.name +"["+str(k)+"]"+ " + NET " + m.name +"["+str(k)+"]"+ " + DIRECTION INPUT + USE SIGNAL\n + PORT\n   + LAYER met"+str(metalLayer)+" ( "+str(pinStartX)+" "+str(pinStartY)+" ) ( "+str(pinEndX)+" "+str(pinEndY) + " )\n  + PLACED ( "+str(x)+" " +str(y) +" ) N ;\n")
                         if((x<dieWidth)&(xFlag==True)):
-                             x = x+spacing
-                             print("here1")
+                            x = x+spacing
+                             
                         if(x>=dieWidth):
                             xFlag = False 
-                            print("here2")
+                            
                             y = y+ spacing
                         if(y>dieHeight): 
                             yFlag = False 
-                            print("here3")
+                            
                             x = x - spacing
                         if((x==0)&(xFlag==False)):
                             y = y - spacing
-                            print("here4")
+                            
 
 
 
